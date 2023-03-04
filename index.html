@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Trie Data Structure</title> 
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Playfair+Display:700,400,900,400italic,700italic,900italic|Merriweather:400,300,700,900,300italic,400italic,700italic,900italic|Anonymous+Pro:400,700,400italic,700italic|Roboto:400,700' />
+    <link rel='stylesheet' type='text/css' href='https://cdn.rawgit.com/google/code-prettify/master/styles/desert.css' />
+    <link rel='stylesheet' type='text/css' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css' />
+
+
+<style>
+body {
+  margin:50px 10px;
+}
+
+#blog {
+  display: block; 
+  width: auto!important; 
+  overflow: hidden; 
+} 
+
+a, a.named_anchor {
+    text-decoration: inherit;
+    font-style: inherit;
+    color: inherit;
+  }
+  
+
+
+h1 {
+    letter-spacing: -0.06em;
+    margin-bottom: 0.05em;
+    line-height: 1em;
+}
+
+.byline {
+    font: normal normal 400 1.3em;
+    margin-bottom: .8em;
+    letter-spacing: -0.04em;
+  }
+
+.pubdate {
+    font: normal normal 400 1em;
+    text-transform: uppercase;
+    margin-bottom: 1em;
+  }
+
+.pubtime:before {
+    font-family: 'FontAwesome';
+    font-size: .8em;
+    content:'\f054';
+    margin: 0em .5em;
+}
+
+hr {
+    border: 0;
+    border-bottom: 4px double;
+    height: 0.15em;
+}
+
+
+.topic {
+    font: normal normal 900 .8em;
+    text-transform: uppercase;
+    margin-bottom: 1em;
+  }
+
+#article {
+  font: normal normal 400 1em/2em;
+  line-height: 2em;
+  text-align: justify;
+}
+
+a, a:link {
+    text-decoration: none;
+    cursor: pointer;
+    color: #1b98e0;
+}  
+
+.shade {
+  background: #eee;
+  padding: 0 0.2em;
+}
+    
+h2, h3, h4, h5 { 
+    font-weight: 650; 
+    font-size: 1.25em; 
+}
+
+
+p { 
+    margin-bottom:2em; 
+    line-height: 2em;
+}
+    
+pre {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-left: 3px solid #F2957E;
+    color: #666;
+    page-break-inside: avoid;
+    font-family: monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 1.6em;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1em 1.5em;
+    display: block;
+    word-wrap: break-word;
+}
+
+pre span {
+  color: #339b4b;
+}
+
+.slideSample {
+  width: 50%;
+}
+
+h6 {
+    color: #ee856b;
+}
+
+hr {
+  border: 0;
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@media only screen and (max-width: 768px) {
+  .slideSample {
+    width: 80%;
+  }
+}
+
+    </style>
+</head>
+<body>
+    
+    
+<div class="container">
+    <div id="blog">
+      <div id="title">
+        <div class="pubdate">03 March 2023<hr/></div>
+        <h1>Understanding Trie Data Structure</h1>
+        <div class="byline">by Phoebe Yaheng Wu</div> 
+        <!-- <div class="topic">Data</div> -->
+      </div>
+      
+    
+      
+      <!-- Article text -->
+      <!-- <a class="named_anchor" name="2549202418499648455"></a> -->
+<div id="article">
+  <div id="content"> 
+<p>Trie is a tree-like data structure that organizes a collection of words by breaking each word down into its individual letters. Each path from the root to a leaf node represents a complete word, making it easy to locate specific words. It's just like how we go to a library, where the books are organized by titles and subjects so that we can easily find what we need.</p>
+<p>To find a word in the Trie, start at the root and follow the branches that correspond to the letters in the word. This allows you to quickly find the word you're looking for without searching through the entire structure. Because of its efficiency in searching and storing vast collections of words, Trie is a useful data structure in various applications, such as spell-checking and autocomplete.</p>
+
+<p>Below, I summarized a list of Trie algorithm questions and answers from Leetcode to help you better understand the topic. Happy coding!&#128516;</p>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/redundant-connection/" target="_blank">https://leetcode.com/problems/redundant-connection/</a></p> 
+<pre>
+class Solution:
+  def findRedundantConnection(self, edges: List[List[int]]) -> List[int]:
+      n = len(edges)
+      f = list(range(n + 1))
+      
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+      
+      def union(x, y):
+          f[find(x)] = find(y)
+      
+      for u, v in edges:
+          if find(u) == find(v): return [u, v]    
+          union(u, v)
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/graph-valid-tree/" target="_blank">https://leetcode.com/problems/graph-valid-tree/</a></p> 
+<pre>
+class Solution:
+  def validTree(self, n: int, edges: List[List[int]]) -> bool:
+      if len(edges) < n - 1: return False
+      
+      f = list(range(n))
+      
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+          
+      def union(x, y):
+          f[find(x)] = find(y)
+      
+      for u, v in edges:
+          if find(u) == find(v): return False
+          union(u, v)
+      return True
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/count-unreachable-pairs-of-nodes-in-an-undirected-graph/" target="_blank">https://leetcode.com/problems/count-unreachable-pairs-of-nodes-in-an-undirected-graph/</a></p> 
+<pre>
+class Solution:
+  def countPairs(self, n: int, edges: List[List[int]]) -> int:
+      f = list(range(n))
+      
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+      
+      def union(x, y):
+          f[find(x)] = find(y)
+          
+      for u, v in edges:
+          union(u, v)
+      
+      mp = defaultdict(int)
+      for i in range(n):
+          mp[find(i)] += 1
+      
+      ans, sm = 0, 0
+      for x in mp.values():
+          ans += sm * x
+          sm += x
+          
+      return ans
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/connecting-cities-with-minimum-cost/" target="_blank">https://leetcode.com/problems/connecting-cities-with-minimum-cost/</a></p> 
+<pre>
+class Solution:
+  def minimumCost(self, n: int, connections: List[List[int]]) -> int:
+      f = list(range(n))
+      
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+      
+      def union(x, y):
+          f[find(x)] = find(y)
+      
+      connections.sort(key = lambda x: x[2])
+      
+      ans = 0
+      for u, v, w in connections:
+          if find(u - 1) != find(v - 1):
+              union(u - 1, v - 1)
+              ans += w
+              
+      return ans if sum(f[i] == i for i in range(n)) == 1 else -1
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/most-stones-removed-with-same-row-or-column/" target="_blank">https://leetcode.com/problems/most-stones-removed-with-same-row-or-column/</a></p> 
+<pre>
+class Solution:
+  def removeStones(self, stones: List[List[int]]) -> int:
+      n = len(stones)
+      f = {}
+      
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+      
+      def union(x, y):
+          f[find(x)] = find(y)
+
+      for u, v in stones:
+          f[u] = u
+          f[v + 10005] = v + 10005
+      
+      for u, v in stones:
+          union(u, v + 10005)
+
+      return n - sum(k == v for k, v in f.items())
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/" target="_blank">https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/</a></p> 
+<pre>
+class Solution:
+  def minimumHammingDistance(self, source: List[int], target: List[int], allowedSwaps: List[List[int]]) -> int:
+      n = len(source)
+      f = list(range(n))
+
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+
+      def union(x, y):
+          f[find(x)] = find(y)
+
+      for u, v in allowedSwaps:
+          union(u, v)
+
+      g = defaultdict(list)
+      for i in range(n):
+          g[find(i)].append(i)
+          
+      ans = 0
+      for v in g.values():
+          freq = defaultdict(int)
+          for idx in v:
+              freq[target[idx]] += 1
+              freq[source[idx]] -= 1
+          ans += sum(abs(x) for x in freq.values()) // 2
+
+      return ans
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/satisfiability-of-equality-equations/" target="_blank">https://leetcode.com/problems/satisfiability-of-equality-equations/</a></p> 
+<pre>
+class Solution:
+  def equationsPossible(self, equations: List[str]) -> bool:
+      f = {}
+
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+      
+      def union(x, y):
+          f[find(x)] = find(y)
+
+      for e in equations:
+          f[e[0]] = e[0]
+          f[e[3]] = e[3]
+      
+      for e in equations:
+          if e[1] == "=":
+              union(e[0], e[3])
+      
+      for e in equations:
+          if e[1] == "!" and find(e[0]) == find(e[3]): return False
+      return True
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/sentence-similarity-ii/" target="_blank">https://leetcode.com/problems/sentence-similarity-ii/</a></p> 
+<pre>
+class Solution:
+  def areSentencesSimilarTwo(self, sentence1: List[str], sentence2: List[str], similarPairs: List[List[str]]) -> bool:
+      f = {}
+      if len(sentence1) != len(sentence2): return False
+      
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+
+      def union(x, y):
+          f[find(x)] = find(y)
+
+      for u, v in similarPairs:
+          f[u] = u
+          f[v] = v
+
+      for u, v in similarPairs:
+          union(u, v)
+
+      for i, j in zip(sentence1, sentence2):
+          if i != j:
+              if i not in f or j not in f: return False
+              if find(i) != find(j): return False
+      return True
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/min-cost-to-connect-all-points/" target="_blank">https://leetcode.com/problems/min-cost-to-connect-all-points/</a></p> 
+<pre>
+class Solution:
+  def minCostConnectPoints(self, points: List[List[int]]) -> int:
+      d = []
+      for u, v in combinations(points, 2):
+          d.append([abs(u[0] - v[0]) + abs(u[1] - v[1]), str(u), str(v)])
+
+      d.sort()
+
+      f = {}
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+
+      def union(x, y):
+          f[find(x)] = find(y)
+
+      for w, u, v in d:
+          f[u] = u
+          f[v] = v
+          
+      ans = 0
+      for w, u, v in d:
+          if find(u) != find(v):
+              union(u, v)
+              ans += w
+
+      return ans
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/similar-string-groups/" target="_blank">https://leetcode.com/problems/similar-string-groups/</a></p> 
+<pre>
+class Solution:
+  def numSimilarGroups(self, strs: List[str]) -> int:
+      f = {}
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+      
+      def union(u, v):
+          f[find(u)] = find(v)
+
+      def isSimilar(x, y):
+          return sum(u != v for u, v in zip(x, y)) <= 2
+      
+      for s in strs:
+          f[s] = s
+
+      for u, v in combinations(strs, 2):
+          if isSimilar(u, v): union(u, v)
+      
+      return len(set(find(s) for s in strs))
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/accounts-merge/" target="_blank">https://leetcode.com/problems/accounts-merge/</a></p> 
+<pre>
+class Solution:
+  def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+
+      def union(x, y):
+          f[find(x)] = find(y)
+
+      f, emailToName = {}, {}
+      for account in accounts:
+          name = account[0]
+          for email in account[1:]:
+              if email not in f: f[email] = email
+              union(email, account[1])
+              emailToName[email] = name
+
+      ans = defaultdict(list)
+      for email in f: ans[find(email)].append(email)
+
+      return [[emailToName[root]] + sorted(email) for root, email in ans.items()]
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/lexicographically-smallest-equivalent-string/" target="_blank">https://leetcode.com/problems/lexicographically-smallest-equivalent-string/</a></p> 
+<pre>
+class Solution:
+  def smallestEquivalentString(self, s1: str, s2: str, baseStr: str) -> str:
+      f = {}
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+      
+      def union(x, y):
+          f[find(x)] = find(y)
+
+      for u, v in zip(s1, s2):
+          if u not in f: f[u] = u
+          if v not in f: f[v] = v
+          union(u, v)
+
+      mp = defaultdict(lambda: 'z')
+      for s in f: mp[find(s)] = min(mp[find(s)], s)
+
+      base = list(baseStr)
+      for i in range(len(base)):
+          if base[i] in f: base[i] = mp[find(base[i])]
+      
+      return ''.join(base)
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/smallest-string-with-swaps/" target="_blank">https://leetcode.com/problems/smallest-string-with-swaps/</a></p> 
+<pre>
+class Solution:
+  def smallestStringWithSwaps(self, s: str, pairs: List[List[int]]) -> str:
+      n = len(s)
+      f = list(range(n))
+
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+      
+      def union(x, y):
+          f[find(x)] = find(y)
+
+      for u, v in pairs:
+          union(u, v)
+
+      mp = defaultdict(list)
+      for i in range(n): mp[find(i)].append(i)
+
+      ans = [''] * n
+      for idx in mp.values():
+          t = sorted([s[i] for i in idx])
+          for i in range(len(idx)):
+              ans[idx[i]] = t[i]
+
+      return ''.join(ans)
+</pre>
+
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/synonymous-sentences/" target="_blank">https://leetcode.com/problems/synonymous-sentences/</a></p> 
+<pre>
+class Solution:
+  def generateSentences(self, synonyms: List[List[str]], text: str) -> List[str]:
+      f = {}
+
+      def find(x):
+          if f[x] != x: f[x] = find(f[x])
+          return f[x]
+
+      def union(x, y):
+          f[find(x)] = find(y)
+
+      for u, v in synonyms:
+          if u not in f: f[u] = u
+          if v not in f: f[v] = v
+          union(u, v)
+
+      mp = defaultdict(list)
+      for x in f: mp[find(x)].append(x)
+      s = text.split()
+      ans = [s[::]]
+      
+      for i in range(len(s)):
+          if s[i] in f:
+              nxt = []
+              for w in ans:
+                  for v in mp[find(s[i])]:
+                      w[i] = v
+                      nxt.append(w[::])
+              ans = nxt
+      return sorted(' '.join(x) for x in ans)
+</pre>
+
+</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="page-footer font-small blue pt-4">
+  
+      <!-- Copyright -->
+      <div class="footer-copyright text-center py-3">
+        
+        <div id="disqus_thread"></div>
+      </div>
+      <!-- Copyright -->
+    
+    </footer>
+    <!-- Footer -->
+    
+    </div>
+    <!-- Scripts --> 
+
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/prettify.js"></script>
+
+    <script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script>
+
+    <script>var pfHeaderImgUrl = '';var pfHeaderTagline = '';var pfdisableClickToDel = 0;var pfHideImages = 0;var pfImageDisplayStyle = 'right';var pfDisablePDF = 0;var pfDisableEmail = 0;var pfDisablePrint = 0;var pfCustomCSS = '';var pfBtVersion='1';(function(){var js, pf;pf = document.createElement('script');pf.type = 'text/javascript';if ('https:' === document.location.protocol){js='https://pf-cdn.printfriendly.com/ssl/main.js'}else{js='http://cdn.printfriendly.com/printfriendly.js'}pf.src=js;document.getElementsByTagName('head')[0].appendChild(pf)})();</script>
+
+
+
+    <script>
+
+      (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://wuyaheng.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</body>
+</html>
+
+
