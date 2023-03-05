@@ -164,11 +164,7 @@ hr {
 <p>Below, I summarized a list of Trie algorithm questions from Leetcode to help you better understand the topic. Happy coding!&#128516;</p>
 
 <p class="text-center text-muted"><a href="https://leetcode.com/problems/implement-trie-prefix-tree/" target="_blank">https://leetcode.com/problems/implement-trie-prefix-tree/</a></p> 
-<pre>
 
-</pre>
-
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/graph-valid-tree/" target="_blank">https://leetcode.com/problems/graph-valid-tree/</a></p> 
 <pre>
 class Node:
   def __init__(self):
@@ -200,32 +196,35 @@ class Trie:
       return True
 </pre>
 
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/count-unreachable-pairs-of-nodes-in-an-undirected-graph/" target="_blank">https://leetcode.com/problems/count-unreachable-pairs-of-nodes-in-an-undirected-graph/</a></p> 
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/design-add-and-search-words-data-structure/" target="_blank">https://leetcode.com/problems/design-add-and-search-words-data-structure/</a></p> 
 <pre>
-class Solution:
-  def countPairs(self, n: int, edges: List[List[int]]) -> int:
-      f = list(range(n))
-      
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-      
-      def union(x, y):
-          f[find(x)] = find(y)
-          
-      for u, v in edges:
-          union(u, v)
-      
-      mp = defaultdict(int)
-      for i in range(n):
-          mp[find(i)] += 1
-      
-      ans, sm = 0, 0
-      for x in mp.values():
-          ans += sm * x
-          sm += x
-          
-      return ans
+class Node:
+  def __init__(self):
+      self.nxt = defaultdict(Node)
+      self.isWord = False
+
+class WordDictionary:
+  def __init__(self):
+      self.root = Node()
+
+  def addWord(self, word: str) -> None:
+      cur = self.root
+      for c in word:
+          cur = cur.nxt[c]
+      cur.isWord = True
+
+  def find(self, cur, u, word):
+      if u == len(word): return cur.isWord
+      if word[u] == ".":
+          for v in cur.nxt:
+              if self.find(cur.nxt[v], u + 1, word): return True
+          return False
+      else:
+          if word[u] not in cur.nxt: return False
+          return self.find(cur.nxt[word[u]], u + 1, word)
+
+  def search(self, word: str) -> bool:
+      return self.find(self.root, 0, word)
 </pre>
 
 <p class="text-center text-muted"><a href="https://leetcode.com/problems/connecting-cities-with-minimum-cost/" target="_blank">https://leetcode.com/problems/connecting-cities-with-minimum-cost/</a></p> 
