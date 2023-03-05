@@ -158,48 +158,45 @@ hr {
       <!-- <a class="named_anchor" name="2549202418499648455"></a> -->
 <div id="article">
   <div id="content"> 
-<p>Trie is a tree-like data structure that organizes a collection of words by breaking each word down into its individual letters. Each path from the root to a leaf node represents a complete word, making it easy to locate specific words. It's just like how we go to a library, where the books are organized by titles and subjects so that we can easily find what we need.</p>
-<p>To find a word in the Trie, start at the root and follow the branches that correspond to the letters in the word. This allows you to quickly find the word you're looking for without searching through the entire structure. Because of its efficiency in searching and storing vast collections of words, Trie is a useful data structure in various applications, such as spell-checking and autocomplete.</p>
+<p>Trie, a prefix tree, is a tree-like data structure that organizes a collection of words by breaking each word down into its individual letters. Each path from the root to a leaf node represents a complete word, making it easy to locate specific words. It's just like how we go to a library, where the books are organized by titles and subjects so that we can easily find what we need.</p>
+<p>To find a word in the Trie, start at the root and follow the branches that correspond to the letters in the word. This allows you to quickly find the word you're looking for without searching through the entire structure. Because of its efficiency in searching and storing vast collections of words, Trie is a useful data structure in various applications, including but not limited to spell-checking and autocomplete.</p>
 
-<p>Below, I summarized a list of Trie algorithm questions and answers from Leetcode to help you better understand the topic. Happy coding!&#128516;</p>
+<p>Below, I summarized a list of Trie algorithm questions from Leetcode to help you better understand the topic. Happy coding!&#128516;</p>
 
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/redundant-connection/" target="_blank">https://leetcode.com/problems/redundant-connection/</a></p> 
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/implement-trie-prefix-tree/" target="_blank">https://leetcode.com/problems/implement-trie-prefix-tree/</a></p> 
 <pre>
-class Solution:
-  def findRedundantConnection(self, edges: List[List[int]]) -> List[int]:
-      n = len(edges)
-      f = list(range(n + 1))
-      
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-      
-      def union(x, y):
-          f[find(x)] = find(y)
-      
-      for u, v in edges:
-          if find(u) == find(v): return [u, v]    
-          union(u, v)
+
 </pre>
 
 <p class="text-center text-muted"><a href="https://leetcode.com/problems/graph-valid-tree/" target="_blank">https://leetcode.com/problems/graph-valid-tree/</a></p> 
 <pre>
-class Solution:
-  def validTree(self, n: int, edges: List[List[int]]) -> bool:
-      if len(edges) < n - 1: return False
+class Node:
+  def __init__(self):
+      self.nxt = defaultdict(Node)
+      self.isWord = False
+
+class Trie:
+  def __init__(self):
+      self.root = Node()
+
+  def insert(self, word: str) -> None:
+      cur = self.root
+      for c in word:
+          cur = cur.nxt[c]
+      cur.isWord = True
+
+  def search(self, word: str) -> bool:
+      cur = self.root
+      for c in word:
+          if c not in cur.nxt: return False
+          cur = cur.nxt[c]
+      return cur.isWord
       
-      f = list(range(n))
-      
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-          
-      def union(x, y):
-          f[find(x)] = find(y)
-      
-      for u, v in edges:
-          if find(u) == find(v): return False
-          union(u, v)
+  def startsWith(self, prefix: str) -> bool:
+      cur = self.root
+      for c in prefix:
+          if c not in cur.nxt: return False
+          cur = cur.nxt[c]
       return True
 </pre>
 
