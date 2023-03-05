@@ -227,309 +227,39 @@ class WordDictionary:
       return self.find(self.root, 0, word)
 </pre>
 
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/connecting-cities-with-minimum-cost/" target="_blank">https://leetcode.com/problems/connecting-cities-with-minimum-cost/</a></p> 
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/implement-magic-dictionary/" target="_blank">https://leetcode.com/problems/implement-magic-dictionary/</a></p> 
 <pre>
-class Solution:
-  def minimumCost(self, n: int, connections: List[List[int]]) -> int:
-      f = list(range(n))
-      
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-      
-      def union(x, y):
-          f[find(x)] = find(y)
-      
-      connections.sort(key = lambda x: x[2])
-      
-      ans = 0
-      for u, v, w in connections:
-          if find(u - 1) != find(v - 1):
-              union(u - 1, v - 1)
-              ans += w
-              
-      return ans if sum(f[i] == i for i in range(n)) == 1 else -1
+class Node:
+  def __init__(self):
+      self.nxt = defaultdict(Node)
+      self.isWord = False
+
+class MagicDictionary:
+  def __init__(self):
+      self.root = Node()
+
+  def buildDict(self, dictionary: List[str]) -> None:
+      for s in dictionary:
+          cur = self.root
+          for c in s:
+              cur = cur.nxt[c]
+          cur.isWord = True
+
+  def find(self, s, cur, u, used):
+      if u == len(s):
+          return cur.isWord and used
+      for v in cur.nxt:
+          if s[u] == v:
+              if self.find(s, cur.nxt[v], u + 1, used): return True
+          else:
+              if not used and self.find(s, cur.nxt[v], u + 1, True): return True
+      return False
+
+  def search(self, searchWord: str) -> bool:
+      return self.find(searchWord, self.root, 0, False)
 </pre>
 
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/most-stones-removed-with-same-row-or-column/" target="_blank">https://leetcode.com/problems/most-stones-removed-with-same-row-or-column/</a></p> 
-<pre>
-class Solution:
-  def removeStones(self, stones: List[List[int]]) -> int:
-      n = len(stones)
-      f = {}
-      
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-      
-      def union(x, y):
-          f[find(x)] = find(y)
 
-      for u, v in stones:
-          f[u] = u
-          f[v + 10005] = v + 10005
-      
-      for u, v in stones:
-          union(u, v + 10005)
-
-      return n - sum(k == v for k, v in f.items())
-</pre>
-
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/" target="_blank">https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/</a></p> 
-<pre>
-class Solution:
-  def minimumHammingDistance(self, source: List[int], target: List[int], allowedSwaps: List[List[int]]) -> int:
-      n = len(source)
-      f = list(range(n))
-
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-
-      def union(x, y):
-          f[find(x)] = find(y)
-
-      for u, v in allowedSwaps:
-          union(u, v)
-
-      g = defaultdict(list)
-      for i in range(n):
-          g[find(i)].append(i)
-          
-      ans = 0
-      for v in g.values():
-          freq = defaultdict(int)
-          for idx in v:
-              freq[target[idx]] += 1
-              freq[source[idx]] -= 1
-          ans += sum(abs(x) for x in freq.values()) // 2
-
-      return ans
-</pre>
-
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/satisfiability-of-equality-equations/" target="_blank">https://leetcode.com/problems/satisfiability-of-equality-equations/</a></p> 
-<pre>
-class Solution:
-  def equationsPossible(self, equations: List[str]) -> bool:
-      f = {}
-
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-      
-      def union(x, y):
-          f[find(x)] = find(y)
-
-      for e in equations:
-          f[e[0]] = e[0]
-          f[e[3]] = e[3]
-      
-      for e in equations:
-          if e[1] == "=":
-              union(e[0], e[3])
-      
-      for e in equations:
-          if e[1] == "!" and find(e[0]) == find(e[3]): return False
-      return True
-</pre>
-
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/sentence-similarity-ii/" target="_blank">https://leetcode.com/problems/sentence-similarity-ii/</a></p> 
-<pre>
-class Solution:
-  def areSentencesSimilarTwo(self, sentence1: List[str], sentence2: List[str], similarPairs: List[List[str]]) -> bool:
-      f = {}
-      if len(sentence1) != len(sentence2): return False
-      
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-
-      def union(x, y):
-          f[find(x)] = find(y)
-
-      for u, v in similarPairs:
-          f[u] = u
-          f[v] = v
-
-      for u, v in similarPairs:
-          union(u, v)
-
-      for i, j in zip(sentence1, sentence2):
-          if i != j:
-              if i not in f or j not in f: return False
-              if find(i) != find(j): return False
-      return True
-</pre>
-
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/min-cost-to-connect-all-points/" target="_blank">https://leetcode.com/problems/min-cost-to-connect-all-points/</a></p> 
-<pre>
-class Solution:
-  def minCostConnectPoints(self, points: List[List[int]]) -> int:
-      d = []
-      for u, v in combinations(points, 2):
-          d.append([abs(u[0] - v[0]) + abs(u[1] - v[1]), str(u), str(v)])
-
-      d.sort()
-
-      f = {}
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-
-      def union(x, y):
-          f[find(x)] = find(y)
-
-      for w, u, v in d:
-          f[u] = u
-          f[v] = v
-          
-      ans = 0
-      for w, u, v in d:
-          if find(u) != find(v):
-              union(u, v)
-              ans += w
-
-      return ans
-</pre>
-
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/similar-string-groups/" target="_blank">https://leetcode.com/problems/similar-string-groups/</a></p> 
-<pre>
-class Solution:
-  def numSimilarGroups(self, strs: List[str]) -> int:
-      f = {}
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-      
-      def union(u, v):
-          f[find(u)] = find(v)
-
-      def isSimilar(x, y):
-          return sum(u != v for u, v in zip(x, y)) <= 2
-      
-      for s in strs:
-          f[s] = s
-
-      for u, v in combinations(strs, 2):
-          if isSimilar(u, v): union(u, v)
-      
-      return len(set(find(s) for s in strs))
-</pre>
-
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/accounts-merge/" target="_blank">https://leetcode.com/problems/accounts-merge/</a></p> 
-<pre>
-class Solution:
-  def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-
-      def union(x, y):
-          f[find(x)] = find(y)
-
-      f, emailToName = {}, {}
-      for account in accounts:
-          name = account[0]
-          for email in account[1:]:
-              if email not in f: f[email] = email
-              union(email, account[1])
-              emailToName[email] = name
-
-      ans = defaultdict(list)
-      for email in f: ans[find(email)].append(email)
-
-      return [[emailToName[root]] + sorted(email) for root, email in ans.items()]
-</pre>
-
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/lexicographically-smallest-equivalent-string/" target="_blank">https://leetcode.com/problems/lexicographically-smallest-equivalent-string/</a></p> 
-<pre>
-class Solution:
-  def smallestEquivalentString(self, s1: str, s2: str, baseStr: str) -> str:
-      f = {}
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-      
-      def union(x, y):
-          f[find(x)] = find(y)
-
-      for u, v in zip(s1, s2):
-          if u not in f: f[u] = u
-          if v not in f: f[v] = v
-          union(u, v)
-
-      mp = defaultdict(lambda: 'z')
-      for s in f: mp[find(s)] = min(mp[find(s)], s)
-
-      base = list(baseStr)
-      for i in range(len(base)):
-          if base[i] in f: base[i] = mp[find(base[i])]
-      
-      return ''.join(base)
-</pre>
-
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/smallest-string-with-swaps/" target="_blank">https://leetcode.com/problems/smallest-string-with-swaps/</a></p> 
-<pre>
-class Solution:
-  def smallestStringWithSwaps(self, s: str, pairs: List[List[int]]) -> str:
-      n = len(s)
-      f = list(range(n))
-
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-      
-      def union(x, y):
-          f[find(x)] = find(y)
-
-      for u, v in pairs:
-          union(u, v)
-
-      mp = defaultdict(list)
-      for i in range(n): mp[find(i)].append(i)
-
-      ans = [''] * n
-      for idx in mp.values():
-          t = sorted([s[i] for i in idx])
-          for i in range(len(idx)):
-              ans[idx[i]] = t[i]
-
-      return ''.join(ans)
-</pre>
-
-<p class="text-center text-muted"><a href="https://leetcode.com/problems/synonymous-sentences/" target="_blank">https://leetcode.com/problems/synonymous-sentences/</a></p> 
-<pre>
-class Solution:
-  def generateSentences(self, synonyms: List[List[str]], text: str) -> List[str]:
-      f = {}
-
-      def find(x):
-          if f[x] != x: f[x] = find(f[x])
-          return f[x]
-
-      def union(x, y):
-          f[find(x)] = find(y)
-
-      for u, v in synonyms:
-          if u not in f: f[u] = u
-          if v not in f: f[v] = v
-          union(u, v)
-
-      mp = defaultdict(list)
-      for x in f: mp[find(x)].append(x)
-      s = text.split()
-      ans = [s[::]]
-      
-      for i in range(len(s)):
-          if s[i] in f:
-              nxt = []
-              for w in ans:
-                  for v in mp[find(s[i])]:
-                      w[i] = v
-                      nxt.append(w[::])
-              ans = nxt
-      return sorted(' '.join(x) for x in ans)
-</pre>
 
 </div>
       </div>
