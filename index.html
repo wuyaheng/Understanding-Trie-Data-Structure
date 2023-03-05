@@ -259,6 +259,27 @@ class MagicDictionary:
       return self.find(searchWord, self.root, 0, False)
 </pre>
 
+<p class="text-center text-muted"><a href="https://leetcode.com/problems/longest-common-prefix/" target="_blank">https://leetcode.com/problems/longest-common-prefix/</a></p> 
+<pre>
+class Node:
+  def __init__(self):
+      self.nxt = defaultdict(Node)
+      self.cnt = 0
+
+class Solution:
+  def longestCommonPrefix(self, strs: List[str]) -> str:
+      root = Node()
+      mx = 0
+      for s in strs:
+          cur = root
+          for i in range(len(s)):
+              cur = cur.nxt[s[i]]
+              cur.cnt += 1
+              if cur.cnt == len(strs):
+                  mx = max(mx, i + 1)
+      
+      return strs[0][:mx]
+</pre>
 
 
 </div>
